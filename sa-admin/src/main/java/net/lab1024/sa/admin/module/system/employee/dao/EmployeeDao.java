@@ -168,4 +168,11 @@ public interface EmployeeDao extends BaseMapper<EmployeeEntity> {
      */
     Integer updatePassword(@Param("employeeId") Integer employeeId, @Param("password") String password);
 
+    /**
+     * 更新用户余额
+     */
+    void updateBalance(@Param("employeeId") Long employeeId, @Param("balance") Long balance);
+
+
+    Long getBalance(@Param("employeeId") Long userId);
 }

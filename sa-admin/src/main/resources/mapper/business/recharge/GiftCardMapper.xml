@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.business.recharge.dao.GiftCardDao">
+
+    <select id="selectByCardNo"
+            resultType="net.lab1024.sa.admin.module.business.recharge.domain.entity.GiftCard">
+        SELECT *
+        FROM t_gift_card
+        WHERE card_no = #{cardNo}
+    </select>
+</mapper>

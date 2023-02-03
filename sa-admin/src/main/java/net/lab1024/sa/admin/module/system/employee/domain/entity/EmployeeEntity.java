@@ -39,6 +39,11 @@ public class EmployeeEntity {
     private String actualName;
 
     /**
+     * 余额
+     */
+    private Long balance;
+
+    /**
      * 性别
      */
     private Integer gender;

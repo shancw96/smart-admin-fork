@@ -35,6 +35,9 @@ public class EmployeeVO {
     @ApiModelProperty("手机号码")
     private String phone;
 
+    @ApiModelProperty("余额")
+    private Long balance;
+
     @ApiModelProperty("部门id")
     private Long departmentId;
 

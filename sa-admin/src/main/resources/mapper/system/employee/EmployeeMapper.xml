@@ -189,10 +189,20 @@
             </if>
         </where>
     </select>
+    <select id="getBalance" resultType="java.lang.Long">
+        SELECT balance
+        FROM t_employee
+        WHERE employee_id = #{employeeId}
+    </select>
 
     <update id="updatePassword">
         UPDATE t_employee
         SET login_pwd = #{password}
+        WHERE employee_id = #{employeeId}
+    </update>
+    <update id="updateBalance">
+        UPDATE t_employee
+        SET balance = #{balance}
         WHERE employee_id = #{employeeId}
     </update>
 
