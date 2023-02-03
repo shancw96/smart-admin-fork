@@ -72,4 +72,16 @@ public class GoodsController extends AdminBaseController {
     }
 
 
+    @ApiOperation("购买商品")
+    @PostMapping("/goods/buy/{goodsId}")
+    public ResponseDTO<String> buy(@PathVariable Long goodsId) {
+        return ResponseDTO.ok();
+    }
+
+    @ApiOperation("查看当前用户购买商品的历史记录")
+    @PostMapping("/goods/history")
+    public ResponseDTO<String> history() {
+        return ResponseDTO.ok();
+    }
+
 }
