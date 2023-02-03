@@ -26,6 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,7 +47,7 @@ public class RechargeService {
      * @param amount
      * @return
      */
-    public String generateGiftCard(Long amount) {
+    public String generateGiftCard(BigDecimal amount) {
         String uuid = IdUtil.randomUUID();
 
         GiftCard giftCard = new GiftCard();
@@ -78,7 +79,9 @@ public class RechargeService {
         giftCard.setValidFlag(false);
         // 2。更新用户金额
         Long userId = requestUser.getUserId();
-        Long balance = employeeDao.getBalance(requestUser.getUserId()) + giftCard.getAmount();
+        // operator '+' cannot be applied to 'java.math.BigDecimal', 'java.math.BigDecimal'
+
+        BigDecimal balance = employeeDao.getBalance(requestUser.getUserId()).add(giftCard.getAmount());
         // 3. 更新用户的充值记录
         RechargeLog rechargeLog = new RechargeLog();
         rechargeLog.setUserId(userId);

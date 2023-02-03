@@ -39,7 +39,6 @@ public class GoodsAddForm {
     private Integer goodsStatus;
 
     @ApiModelProperty("产地")
-    @NotBlank(message = "产地 不能为空 ")
     @JsonDeserialize(using = DictValueVoDeserializer.class)
     private String place;
 
@@ -54,4 +53,12 @@ public class GoodsAddForm {
 
     @ApiModelProperty("备注|可选")
     private String remark;
+
+
+    @ApiModelProperty("时长")
+    @NotNull(message = "时长不能为空")
+    private Integer duration;
+
+    @ApiModelProperty("介绍附件")
+    private String attachmentId;
 }

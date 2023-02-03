@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.lab1024.sa.admin.module.business.goods.dao.GoodsOrderDao">
+
+    <select id="selectByUserId"
+            resultType="net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsOrder">
+        SELECT * FROM t_user_goods WHERE user_id = #{userId}
+    </select>
+</mapper>

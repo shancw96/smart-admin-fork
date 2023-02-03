@@ -50,6 +50,12 @@ public class GoodsVO  {
     @ApiModelProperty("商品分类")
     private String categoryName;
 
+    @ApiModelProperty("时长")
+    private Integer duration;
+
+    @ApiModelProperty("介绍附件")
+    private String attachmentId;
+
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;

@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 
@@ -171,8 +172,8 @@ public interface EmployeeDao extends BaseMapper<EmployeeEntity> {
     /**
      * 更新用户余额
      */
-    void updateBalance(@Param("employeeId") Long employeeId, @Param("balance") Long balance);
+    void updateBalance(@Param("employeeId") Long employeeId, @Param("balance") BigDecimal balance);
 
 
-    Long getBalance(@Param("employeeId") Long userId);
+    BigDecimal getBalance(@Param("employeeId") Long userId);
 }

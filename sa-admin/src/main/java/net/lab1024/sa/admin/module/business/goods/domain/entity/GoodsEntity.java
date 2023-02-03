@@ -69,6 +69,16 @@ public class GoodsEntity {
      */
     private String remark;
 
+    /**
+     * 时长
+     */
+    private Integer duration;
+
+    /**
+     * 介绍附件
+     */
+    private String attachmentId;
+
     private LocalDateTime updateTime;
 
     private LocalDateTime createTime;

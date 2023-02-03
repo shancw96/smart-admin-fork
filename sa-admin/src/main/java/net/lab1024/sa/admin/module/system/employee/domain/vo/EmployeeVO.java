@@ -5,6 +5,7 @@ import lombok.Data;
 import net.lab1024.sa.common.common.enumeration.GenderEnum;
 import net.lab1024.sa.common.common.swagger.ApiModelPropertyEnum;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class EmployeeVO {
     private String phone;
 
     @ApiModelProperty("余额")
-    private Long balance;
+    private BigDecimal balance;
 
     @ApiModelProperty("部门id")
     private Long departmentId;

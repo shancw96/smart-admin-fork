@@ -4,14 +4,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.lab1024.sa.admin.common.AdminBaseController;
 import net.lab1024.sa.admin.constant.AdminSwaggerTagConst;
+import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsOrder;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsAddForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsQueryForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsUpdateForm;
 import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsVO;
 import net.lab1024.sa.admin.module.business.goods.service.GoodsService;
+import net.lab1024.sa.common.common.domain.PageParam;
 import net.lab1024.sa.common.common.domain.PageResult;
 import net.lab1024.sa.common.common.domain.ResponseDTO;
 import net.lab1024.sa.common.common.domain.ValidateList;
+import net.lab1024.sa.common.common.util.SmartRequestUtil;
 import net.lab1024.sa.common.module.support.operatelog.annoation.OperateLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -75,13 +78,13 @@ public class GoodsController extends AdminBaseController {
     @ApiOperation("购买商品")
     @PostMapping("/goods/buy/{goodsId}")
     public ResponseDTO<String> buy(@PathVariable Long goodsId) {
-        return ResponseDTO.ok();
+        return goodsService.buy(SmartRequestUtil.getRequestUserId(), goodsId);
     }
 
     @ApiOperation("查看当前用户购买商品的历史记录")
     @PostMapping("/goods/history")
-    public ResponseDTO<String> history() {
-        return ResponseDTO.ok();
+    public ResponseDTO<PageResult<GoodsOrder>> history(@RequestBody PageParam pageParam) {
+        return goodsService.orderHistory(SmartRequestUtil.getRequestUserId(), pageParam);
     }
 
 }

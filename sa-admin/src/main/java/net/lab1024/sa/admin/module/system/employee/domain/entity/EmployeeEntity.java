@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -41,7 +42,7 @@ public class EmployeeEntity {
     /**
      * 余额
      */
-    private Long balance;
+    private BigDecimal balance;
 
     /**
      * 性别

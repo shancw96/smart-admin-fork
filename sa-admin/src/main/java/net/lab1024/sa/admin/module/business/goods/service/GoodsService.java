@@ -1,19 +1,26 @@
 package net.lab1024.sa.admin.module.business.goods.service;
 
+import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import net.lab1024.sa.admin.module.business.category.constant.CategoryTypeEnum;
 import net.lab1024.sa.admin.module.business.category.domain.entity.CategoryEntity;
 import net.lab1024.sa.admin.module.business.category.service.CategoryQueryService;
 import net.lab1024.sa.admin.module.business.goods.constant.GoodsStatusEnum;
 import net.lab1024.sa.admin.module.business.goods.dao.GoodsDao;
+import net.lab1024.sa.admin.module.business.goods.dao.GoodsOrderDao;
 import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsEntity;
+import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsOrder;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsAddForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsQueryForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsUpdateForm;
 import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsVO;
 import net.lab1024.sa.admin.module.business.goods.manager.GoodsManager;
+import net.lab1024.sa.admin.module.system.employee.dao.EmployeeDao;
+import net.lab1024.sa.admin.module.system.employee.domain.entity.EmployeeEntity;
 import net.lab1024.sa.common.common.code.UserErrorCode;
+import net.lab1024.sa.common.common.domain.PageParam;
 import net.lab1024.sa.common.common.domain.PageResult;
+import net.lab1024.sa.common.common.domain.RequestUser;
 import net.lab1024.sa.common.common.domain.ResponseDTO;
 import net.lab1024.sa.common.common.util.SmartBeanUtil;
 import net.lab1024.sa.common.common.util.SmartPageUtil;
@@ -28,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +57,12 @@ public class GoodsService {
 
     @Autowired
     private DataTracerService dataTracerService;
+
+    @Autowired
+    private EmployeeDao employeeDao;
+
+    @Autowired
+    private GoodsOrderDao goodsOrderDao;
 
     /**
      * 添加商品
@@ -164,5 +178,46 @@ public class GoodsService {
             }
         });
         return ResponseDTO.ok(pageResult);
+    }
+
+
+    /**
+     * 购买商品
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseDTO buy(Long userId, Long goodsId) {
+
+        GoodsEntity goodsEntity = goodsDao.selectById(goodsId);
+        EmployeeEntity employeeEntity = employeeDao.selectById(userId);
+
+        if (goodsEntity == null) {
+            return ResponseDTO.userErrorParam("商品不存在");
+        }
+
+        if(employeeEntity.getBalance().compareTo(goodsEntity.getPrice()) < 0){
+            return ResponseDTO.userErrorParam("余额不足或商品不存在");
+        }
+
+        // 记录交易记录
+        GoodsOrder goodsOrder = new GoodsOrder();
+        goodsOrder.setOrderNo(IdUtil.randomUUID());
+        goodsOrder.setGoodsId(goodsId);
+        goodsOrder.setUserId(userId);
+        goodsOrder.setCost(goodsEntity.getPrice());
+        goodsOrderDao.insert(goodsOrder);
+
+        // 扣减用户余额
+        employeeDao.updateBalance(userId, goodsDao.selectById(goodsId).getPrice());
+
+        return ResponseDTO.ok();
+    }
+
+    /**
+     * 查询用户购买的所有订单记录
+     */
+    public ResponseDTO<PageResult<GoodsOrder>> orderHistory(Long userId, PageParam pageParam) {
+        Page page = SmartPageUtil.convert2PageQuery(pageParam);
+        List<GoodsOrder> goodsOrders = goodsOrderDao.selectByUserId(page, userId);
+        return ResponseDTO.ok(SmartPageUtil.convert2PageResult(page, goodsOrders));
     }
 }

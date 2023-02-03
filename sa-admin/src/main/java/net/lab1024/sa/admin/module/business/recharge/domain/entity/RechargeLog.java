@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import net.lab1024.sa.admin.module.business.recharge.constant.RechargeKindEnum;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -22,7 +23,7 @@ public class RechargeLog {
     /**
      * 充值金额
      */
-    private Long amount;
+    private BigDecimal amount;
 
     /**
      * 充值方式

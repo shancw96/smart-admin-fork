@@ -1,4 +1,4 @@
-package net.lab1024.sa.admin.module.business.recharge.domain.entity;
+package net.lab1024.sa.admin.module.business.goods.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -8,34 +8,40 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+/**
+ * 商品销售实体类
+ */
 @Data
-@TableName("t_gift_card")
-public class GiftCard {
+@TableName("t_user_goods")
+public class GoodsOrder {
     @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
-     * 卡号
+     * 订单号
      */
-    private String cardNo;
+    private String orderNo;
 
     /**
-     * 金额 15 30 50 100
+     * 订单金额
      */
-    private BigDecimal amount;
+    private BigDecimal cost;
 
     /**
-     * 是否有效
+     * 用户id
      */
-    private Boolean validFlag;
+    private Long userId;
 
     /**
-     * 过期时间
+     * 商品id
      */
-    private LocalDateTime expiredTime;
+    private Long goodsId;
+
 
     private LocalDateTime updateTime;
 
+    /**
+     * 创建时间
+     */
     private LocalDateTime createTime;
 }
-

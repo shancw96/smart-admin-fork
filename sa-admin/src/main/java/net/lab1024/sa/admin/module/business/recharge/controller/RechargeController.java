@@ -17,6 +17,8 @@ import net.lab1024.sa.common.module.support.operatelog.annoation.OperateLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @OperateLog
 @RestController
 @Api(tags = AdminSwaggerTagConst.Business.AI_RECHARGE)
@@ -38,7 +40,7 @@ public class RechargeController extends AdminBaseController {
 
     @ApiOperation("生成礼品卡")
     @PostMapping("/recharge/gift-card/generate/{amount}")
-    public ResponseDTO<String> generateGiftCard(@PathVariable Long amount) {
+    public ResponseDTO<String> generateGiftCard(@PathVariable BigDecimal amount) {
         String s = rechargeService.generateGiftCard(amount);
         return ResponseDTO.ok(s);
     }
