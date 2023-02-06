@@ -37,6 +37,11 @@ public class GoodsOrder {
      */
     private Long goodsId;
 
+    /**
+     * 商品名称
+     */
+    private String goodsName;
+
 
     private LocalDateTime updateTime;
 

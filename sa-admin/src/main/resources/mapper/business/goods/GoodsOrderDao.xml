@@ -4,6 +4,9 @@
 
     <select id="selectByUserId"
             resultType="net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsOrder">
-        SELECT * FROM t_user_goods WHERE user_id = #{userId}
+        SELECT *
+        FROM t_user_goods
+                 LEFT JOIN t_goods on t_user_goods.goods_id = t_goods.goods_id
+        WHERE t_user_goods.user_id  = #{userId}
     </select>
 </mapper>

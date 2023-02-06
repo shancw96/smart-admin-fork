@@ -11,6 +11,7 @@ import net.lab1024.sa.common.common.swagger.ApiModelPropertyEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +34,9 @@ public class LoginEmployeeDetail implements UserDetails, RequestUser {
 
     @ApiModelProperty("员工id")
     private Long employeeId;
+
+    @ApiModelProperty("余额")
+    private BigDecimal balance;
 
     @ApiModelPropertyEnum(UserTypeEnum.class)
     private UserTypeEnum userType;

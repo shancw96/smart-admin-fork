@@ -79,7 +79,6 @@ public class RechargeService {
         giftCard.setValidFlag(false);
         // 2。更新用户金额
         Long userId = requestUser.getUserId();
-        // operator '+' cannot be applied to 'java.math.BigDecimal', 'java.math.BigDecimal'
 
         BigDecimal balance = employeeDao.getBalance(requestUser.getUserId()).add(giftCard.getAmount());
         // 3. 更新用户的充值记录

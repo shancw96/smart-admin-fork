@@ -49,8 +49,7 @@ public class RechargeController extends AdminBaseController {
     @GetMapping("/recharge/gift-card/use")
     public ResponseDTO<String> useGiftCard(@RequestParam String giftCard) {
         RequestUser requestUser = SmartRequestUtil.getRequestUser();
-        rechargeService.useGiftCard(giftCard, requestUser);
-        return ResponseDTO.ok();
+        return rechargeService.useGiftCard(giftCard, requestUser);
     }
 
     @ApiOperation("查看礼品卡列表")
