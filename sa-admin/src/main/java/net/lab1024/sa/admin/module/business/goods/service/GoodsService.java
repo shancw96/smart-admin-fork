@@ -207,7 +207,7 @@ public class GoodsService {
         goodsOrderDao.insert(goodsOrder);
 
         // 扣减用户余额
-        employeeDao.updateBalance(userId, goodsDao.selectById(goodsId).getPrice());
+        employeeDao.updateBalance(userId, employeeEntity.getBalance().subtract(goodsDao.selectById(goodsId).getPrice()));
 
         return ResponseDTO.ok();
     }

@@ -4,6 +4,7 @@ import cn.hutool.extra.servlet.ServletUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.lab1024.sa.admin.constant.AdminSwaggerTagConst;
+import net.lab1024.sa.admin.module.system.employee.dao.EmployeeDao;
 import net.lab1024.sa.admin.module.system.login.domain.LoginEmployeeDetail;
 import net.lab1024.sa.admin.module.system.login.domain.LoginForm;
 import net.lab1024.sa.admin.module.system.login.service.LoginService;
@@ -39,6 +40,9 @@ public class LoginController {
     @Autowired
     private LoginService loginService;
 
+    @Autowired
+    private EmployeeDao employeeDao;
+
     @NoNeedLogin
     @PostMapping("/login")
     @ApiOperation("登录 @author 卓大")
@@ -71,6 +75,9 @@ public class LoginController {
 
         LoginEmployeeDetail loginEmployeeDetail = (LoginEmployeeDetail) authentication.getPrincipal();
         loginEmployeeDetail.setLoginPassword(null);
+
+        // 获取用户余额 - 实时获取
+        loginEmployeeDetail.setBalance(employeeDao.getBalance(loginEmployeeDetail.getUserId()));
         return ResponseDTO.ok(loginEmployeeDetail);
     }
 
