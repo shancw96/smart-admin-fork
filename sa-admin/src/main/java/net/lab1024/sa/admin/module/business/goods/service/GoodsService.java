@@ -8,13 +8,17 @@ import net.lab1024.sa.admin.module.business.category.service.CategoryQueryServic
 import net.lab1024.sa.admin.module.business.goods.constant.GoodsStatusEnum;
 import net.lab1024.sa.admin.module.business.goods.dao.GoodsDao;
 import net.lab1024.sa.admin.module.business.goods.dao.GoodsOrderDao;
+import net.lab1024.sa.admin.module.business.goods.dao.GoodsRemainTimeDao;
 import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsEntity;
 import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsOrder;
+import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsRemainTimeEntity;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsAddForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsQueryForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsUpdateForm;
 import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsVO;
 import net.lab1024.sa.admin.module.business.goods.manager.GoodsManager;
+import net.lab1024.sa.admin.module.business.recharge.dao.RechargeLogDao;
+import net.lab1024.sa.admin.module.business.recharge.domain.entity.RechargeLog;
 import net.lab1024.sa.admin.module.system.employee.dao.EmployeeDao;
 import net.lab1024.sa.admin.module.system.employee.domain.entity.EmployeeEntity;
 import net.lab1024.sa.common.common.code.UserErrorCode;
@@ -31,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +69,9 @@ public class GoodsService {
 
     @Autowired
     private GoodsOrderDao goodsOrderDao;
+
+    @Autowired
+    private GoodsRemainTimeDao goodsRemainTimeDao;
 
     /**
      * 添加商品
@@ -208,6 +217,28 @@ public class GoodsService {
 
         // 扣减用户余额
         employeeDao.updateBalance(userId, employeeEntity.getBalance().subtract(goodsDao.selectById(goodsId).getPrice()));
+
+        // 更新用户剩余时常
+        GoodsRemainTimeEntity goodsRemainTimeEntity1 = goodsRemainTimeDao.queryByGoodsId(goodsId).orElseGet(() -> {
+            GoodsRemainTimeEntity goodsRemainTimeEntity = new GoodsRemainTimeEntity();
+            goodsRemainTimeEntity.setUserId(userId);
+            goodsRemainTimeEntity.setGoodsId(goodsId);
+            goodsRemainTimeEntity.setExpiredTime(LocalDateTime.now().minusDays(1));
+            return goodsRemainTimeEntity;
+        });
+        // 如果当前时间已经过期，那么expired_time 设置为today
+        if (goodsRemainTimeEntity1.getExpiredTime().compareTo(LocalDateTime.now()) < 0) {
+            goodsRemainTimeEntity1.setExpiredTime(LocalDateTime.now());
+        }
+        // 在此基础上，增加 goodsEntity.getDuration() 天
+        goodsRemainTimeEntity1.setExpiredTime(goodsRemainTimeEntity1.getExpiredTime().plusDays(goodsEntity.getDuration()));
+
+        // 更新或者新增
+        if (goodsRemainTimeEntity1.getId() == null) {
+            goodsRemainTimeDao.insert(goodsRemainTimeEntity1);
+        } else {
+            goodsRemainTimeDao.updateById(goodsRemainTimeEntity1);
+        }
 
         return ResponseDTO.ok();
     }
