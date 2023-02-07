@@ -1,8 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="net.lab1024.sa.admin.module.business.goods.dao.GoodsRemainTimeDao">
+    <update id="batchUpdateExpiredTime">
+        UPDATE goods_remain_time
+        SET expired_time =
+        <foreach collection="gtList" item="item" index="index">
+            CASE id
+            <foreach collection="gtList" item="item" index="index">
+                WHEN #{item.id} THEN #{item.expiredTime}
+            </foreach>
+            END
+        </foreach>
+        WHERE id IN
+        <foreach collection="gtList" item="item" index="index" open="(" separator="," close=")">
+            #{item.id}
+        </foreach>
+    </update>
 
-<select id="queryByUserId"
+
+    <select id="queryByUserId"
             resultType="net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsRemainTimeEntity">
     SELECT *
     FROM t_user_goods_time
@@ -14,5 +30,19 @@
     SELECT *
     FROM t_user_goods_time
     WHERE goods_id = #{goodsId}
+    </select>
+    <select id="queryAllByRoleIds"
+            resultType="net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsRemainTimeEntity">
+        SELECT DISTINCT t_user_goods_time.*
+        FROM t_role
+                 LEFT JOIN t_role_employee
+                           ON t_role.role_id = t_role_employee.role_id
+                 LEFT JOIN t_user_goods_time
+                           ON t_role_employee.employee_id = t_user_goods_time.user_id
+        WHERE t_user_goods_time.user_id IS NOT NULL
+            AND t_role.role_id IN
+                <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
     </select>
 </mapper>

@@ -2,6 +2,8 @@ package net.lab1024.sa.admin.module.business.goods.service;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.admin.module.business.category.constant.CategoryTypeEnum;
 import net.lab1024.sa.admin.module.business.category.domain.entity.CategoryEntity;
 import net.lab1024.sa.admin.module.business.category.service.CategoryQueryService;
@@ -21,6 +23,8 @@ import net.lab1024.sa.admin.module.business.recharge.dao.RechargeLogDao;
 import net.lab1024.sa.admin.module.business.recharge.domain.entity.RechargeLog;
 import net.lab1024.sa.admin.module.system.employee.dao.EmployeeDao;
 import net.lab1024.sa.admin.module.system.employee.domain.entity.EmployeeEntity;
+import net.lab1024.sa.admin.module.system.role.dao.RoleDao;
+import net.lab1024.sa.admin.module.system.role.domain.entity.RoleEntity;
 import net.lab1024.sa.common.common.code.UserErrorCode;
 import net.lab1024.sa.common.common.domain.PageParam;
 import net.lab1024.sa.common.common.domain.PageResult;
@@ -32,16 +36,15 @@ import net.lab1024.sa.common.module.support.datatracer.constant.DataTracerTypeEn
 import net.lab1024.sa.common.module.support.datatracer.service.DataTracerService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -53,8 +56,9 @@ import java.util.stream.Collectors;
  * @Email lab1024@163.com
  * @Copyright 1024创新实验室 （ https://1024lab.net ），2012-2022
  */
+@Slf4j
 @Service
-public class GoodsService {
+public class GoodsService extends ServiceImpl<GoodsRemainTimeDao, GoodsRemainTimeEntity> {
     @Autowired
     private GoodsDao goodsDao;
 
@@ -72,6 +76,9 @@ public class GoodsService {
 
     @Autowired
     private GoodsRemainTimeDao goodsRemainTimeDao;
+
+    @Autowired
+    private RoleDao roleDao;
 
     /**
      * 添加商品
@@ -241,6 +248,39 @@ public class GoodsService {
         }
 
         return ResponseDTO.ok();
+    }
+
+    /**
+     * 定时任务，每日23:59:59 更新用户购买的商品的有效时长 - 1
+     */
+//    @Scheduled(cron = "59 59 23 * * ?")
+    @Scheduled(fixedRate = 10000)
+    public void updateGoodsRemainTime() {
+        log.info("定时任务 updateGoodsRemainTime start");
+        String excludeRole = "站长";
+        // 根据角色id批量获取到用户列表 userIds
+        List<RoleEntity> roleEntityList = roleDao.selectList(null);
+        List<Long> roleIds = roleEntityList
+                .stream()
+                .filter(roleEntity -> !roleEntity.getRoleName().equals(excludeRole))
+                .map(roleEntity -> roleEntity.getRoleId())
+                .collect(Collectors.toList());
+
+        // 根据roleIds 获取关联的 List<GoodsRemainTimeEntity> gtList
+        // 更新gtList 中的 expired_time，设置天数 - 1
+        List<GoodsRemainTimeEntity> gtList = goodsRemainTimeDao
+                .queryAllByRoleIds(roleIds)
+                .stream()
+                .filter(gt -> gt.getExpiredTime().compareTo(LocalDateTime.now()) > 0)
+                .map(gt -> {
+                    gt.setExpiredTime(gt.getExpiredTime().minusDays(1));
+                    return gt;
+                })
+                .collect(Collectors.toList());
+        // 使用gtList批量更新数据库
+        if (gtList.size() > 0) {
+            goodsRemainTimeDao.batchUpdateExpiredTime(gtList);
+        }
     }
 
     /**
