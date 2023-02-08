@@ -16,6 +16,8 @@ public class AdminSwaggerTagConst extends SwaggerTagConst {
     public static class Business {
         public static final String MANAGER_CATEGORY = "ERP进销存-分类管理";
 
+        public static final String AI_USER_KEY = "AI管理 - 用户密钥管理";
+
         public static final String MANAGER_GOODS = "ERP进销存-商品管理";
 
         public static final String AI_RECHARGE = "AI管理-充值";
