@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation;
 import net.lab1024.sa.admin.constant.AdminSwaggerTagConst;
 import net.lab1024.sa.admin.module.business.key.Service.UserKeyService;
 import net.lab1024.sa.admin.module.business.key.domain.form.KeyUploadForm;
+import net.lab1024.sa.common.common.annoation.NoNeedLogin;
 import net.lab1024.sa.common.common.domain.ResponseDTO;
 import net.lab1024.sa.common.module.support.operatelog.annoation.OperateLog;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,9 @@ public class UserKeyController {
     UserKeyService userKeyService;
 
 
+    @NoNeedLogin
     @ApiOperation("用户key校验")
-    @PostMapping("/login/key/check")
+    @PostMapping("/key/check")
     public ResponseDTO<String> validateKey(@RequestBody KeyUploadForm keyForm) {
         return userKeyService.validate(keyForm);
     }
