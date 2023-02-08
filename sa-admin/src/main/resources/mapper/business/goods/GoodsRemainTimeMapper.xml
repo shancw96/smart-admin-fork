@@ -51,4 +51,12 @@
                    ON t_user_goods_time.goods_id = t_goods.goods_id
         WHERE t_user_goods_time.user_id = #{userId}
     </select>
+
+    <select id="queryAllByUserSecret" resultType="net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsRemainTimeEntity">
+        SELECT t_user_goods_time.*
+        FROM t_user_key
+        LEFT JOIN t_user_goods_time
+            ON t_user_key.user_id = t_user_goods_time.user_id
+        WHERE t_user_key.secret = #{secret}
+    </select>
 </mapper>

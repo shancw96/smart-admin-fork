@@ -22,4 +22,6 @@ public interface GoodsRemainTimeDao extends BaseMapper<GoodsRemainTimeEntity> {
     void batchUpdateExpiredTime(@Param("gtList") List<GoodsRemainTimeEntity> gtList);
 
     List<GoodsRemainTimeVO> queryAllByUserId(@Param("userId") Long requestUserId);
+
+    List<GoodsRemainTimeEntity> queryAllByUserSecret(@Param("secret") String secret);
 }

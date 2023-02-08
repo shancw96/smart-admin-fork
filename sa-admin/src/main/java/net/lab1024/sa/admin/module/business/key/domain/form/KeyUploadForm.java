@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class KeyUploadForm {
-    private String key;
+    private String secret;
 }

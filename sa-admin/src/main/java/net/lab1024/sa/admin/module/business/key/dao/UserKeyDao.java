@@ -10,4 +10,5 @@ import org.springframework.stereotype.Component;
 @Component
 public interface UserKeyDao extends BaseMapper<UserKeyEntity> {
 
+    UserKeyEntity selectByKey(String key);
 }
