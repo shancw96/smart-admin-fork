@@ -253,8 +253,7 @@ public class GoodsService extends ServiceImpl<GoodsRemainTimeDao, GoodsRemainTim
     /**
      * 定时任务，每日23:59:59 更新用户购买的商品的有效时长 - 1
      */
-//    @Scheduled(cron = "59 59 23 * * ?")
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "59 59 23 * * ?")
     public void updateGoodsRemainTime() {
         log.info("定时任务 updateGoodsRemainTime start");
         String excludeRole = "站长";
