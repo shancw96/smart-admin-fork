@@ -2,6 +2,7 @@ package net.lab1024.sa.admin.module.business.goods.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsRemainTimeEntity;
+import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsRemainTimeVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
@@ -20,4 +21,5 @@ public interface GoodsRemainTimeDao extends BaseMapper<GoodsRemainTimeEntity> {
 
     void batchUpdateExpiredTime(@Param("gtList") List<GoodsRemainTimeEntity> gtList);
 
+    List<GoodsRemainTimeVO> queryAllByUserId(@Param("userId") Long requestUserId);
 }

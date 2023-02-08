@@ -43,4 +43,12 @@
                     #{roleId}
                 </foreach>
     </select>
+    <select id="queryAllByUserId"
+            resultType="net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsRemainTimeVO">
+        SELECT *
+        FROM t_user_goods_time
+        LEFT JOIN t_goods
+                   ON t_user_goods_time.goods_id = t_goods.goods_id
+        WHERE t_user_goods_time.user_id = #{userId}
+    </select>
 </mapper>

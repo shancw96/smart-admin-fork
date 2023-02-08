@@ -8,6 +8,7 @@ import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsOrder;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsAddForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsQueryForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsUpdateForm;
+import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsRemainTimeVO;
 import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsVO;
 import net.lab1024.sa.admin.module.business.goods.service.GoodsService;
 import net.lab1024.sa.common.common.domain.PageParam;
@@ -21,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 商品业务
@@ -38,6 +40,7 @@ public class GoodsController extends AdminBaseController {
 
     @Autowired
     private GoodsService goodsService;
+
 
     @ApiOperation("分页查询 @author 胡克")
     @PostMapping("/goods/query")
@@ -84,6 +87,12 @@ public class GoodsController extends AdminBaseController {
     @PostMapping("/goods/history")
     public ResponseDTO<PageResult<GoodsOrder>> history(@RequestBody PageParam pageParam) {
         return goodsService.orderHistory(SmartRequestUtil.getRequestUserId(), pageParam);
+    }
+
+    @ApiOperation("查看当前用户的套餐记录")
+    @GetMapping("/goods/comboList")
+    public ResponseDTO<List<GoodsRemainTimeVO>> comboList() {
+        return goodsService.comboList(SmartRequestUtil.getRequestUserId());
     }
 
 }

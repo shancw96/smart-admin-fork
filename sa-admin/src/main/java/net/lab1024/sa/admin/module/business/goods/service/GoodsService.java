@@ -17,6 +17,7 @@ import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsRemainTimeE
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsAddForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsQueryForm;
 import net.lab1024.sa.admin.module.business.goods.domain.form.GoodsUpdateForm;
+import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsRemainTimeVO;
 import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsVO;
 import net.lab1024.sa.admin.module.business.goods.manager.GoodsManager;
 import net.lab1024.sa.admin.module.business.recharge.dao.RechargeLogDao;
@@ -289,5 +290,23 @@ public class GoodsService extends ServiceImpl<GoodsRemainTimeDao, GoodsRemainTim
         Page page = SmartPageUtil.convert2PageQuery(pageParam);
         List<GoodsOrder> goodsOrders = goodsOrderDao.selectByUserId(page, userId);
         return ResponseDTO.ok(SmartPageUtil.convert2PageResult(page, goodsOrders));
+    }
+
+    /**
+     * 获取对应用户的所有套餐，包括已经过期的
+     */
+    public ResponseDTO<List<GoodsRemainTimeVO>> comboList(Long requestUserId) {
+        List<GoodsRemainTimeVO> goodsRemainTimeEntities = goodsRemainTimeDao.queryAllByUserId(requestUserId);
+        List<GoodsRemainTimeVO> goodsRemainTimeVOS = goodsRemainTimeEntities
+                .stream()
+                .map(vo -> {
+                    vo.setIsValid(vo.getExpiredTime().compareTo(LocalDateTime.now()) > 0);
+                    vo.setDuration(
+                            vo.getExpiredTime().compareTo(LocalDateTime.now()) > 0 ?
+                            vo.getExpiredTime().toLocalDate().toEpochDay() - LocalDateTime.now().toLocalDate().toEpochDay() : 0);
+                    return vo;
+                })
+                .collect(Collectors.toList());
+        return ResponseDTO.ok(goodsRemainTimeVOS);
     }
 }
