@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 @Api(tags = AdminSwaggerTagConst.Business.AI_USER_KEY)
 public class UserKeyController {
     @Autowired
-    UserKeyService userKeyService;
+    private UserKeyService userKeyService;
 
 
     @NoNeedLogin
@@ -37,7 +37,7 @@ public class UserKeyController {
 
     @ApiOperation("重新生成用户key")
     @PostMapping("/key/create")
-    public ResponseDTO<String> createKey() {
-        return userKeyService.create(SmartRequestUtil.getRequestUserId());
+    public ResponseDTO createKey() {
+        return ResponseDTO.ok(userKeyService.create(SmartRequestUtil.getRequestUserId()));
     }
 }

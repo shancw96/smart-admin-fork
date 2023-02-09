@@ -5,6 +5,12 @@
 <select id="selectByKey" resultType="net.lab1024.sa.admin.module.business.key.domain.entity.UserKeyEntity">
     SELECT *
     FROM t_user_key
-    WHERE t_user_key.key = #{key}
+    WHERE t_user_key.secret = #{key}
+</select>
+
+<select id="selectKeyByUserId" resultType="java.lang.String">
+    SELECT t_user_key.secret
+    FROM t_user_key
+    WHERE t_user_key.user_id = #{userId}
 </select>
 </mapper>

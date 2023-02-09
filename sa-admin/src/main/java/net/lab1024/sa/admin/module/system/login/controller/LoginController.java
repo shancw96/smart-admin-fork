@@ -4,6 +4,9 @@ import cn.hutool.extra.servlet.ServletUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import net.lab1024.sa.admin.constant.AdminSwaggerTagConst;
+import net.lab1024.sa.admin.module.business.key.Service.UserKeyService;
+import net.lab1024.sa.admin.module.business.key.dao.UserKeyDao;
+import net.lab1024.sa.admin.module.business.key.domain.entity.UserKeyEntity;
 import net.lab1024.sa.admin.module.system.employee.dao.EmployeeDao;
 import net.lab1024.sa.admin.module.system.login.domain.LoginEmployeeDetail;
 import net.lab1024.sa.admin.module.system.login.domain.LoginForm;
@@ -43,6 +46,12 @@ public class LoginController {
     @Autowired
     private EmployeeDao employeeDao;
 
+    @Autowired
+    private UserKeyDao userKeyDao;
+
+    @Autowired
+    private UserKeyService userKeyService;
+
     @NoNeedLogin
     @PostMapping("/login")
     @ApiOperation("登录 @author 卓大")
@@ -78,6 +87,15 @@ public class LoginController {
 
         // 获取用户余额 - 实时获取
         loginEmployeeDetail.setBalance(employeeDao.getBalance(loginEmployeeDetail.getUserId()));
+
+        // 设置用户secret
+        String s = userKeyDao.selectKeyByUserId(loginEmployeeDetail.getUserId());
+        if(s == null){
+            UserKeyEntity userKeyEntity = userKeyService.create(loginEmployeeDetail.getUserId());
+            s = userKeyEntity.getSecret();
+        }
+        loginEmployeeDetail.setSecretKey(s);
+
         return ResponseDTO.ok(loginEmployeeDetail);
     }
 

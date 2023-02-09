@@ -38,6 +38,9 @@ public class LoginEmployeeDetail implements UserDetails, RequestUser {
     @ApiModelProperty("余额")
     private BigDecimal balance;
 
+    @ApiModelProperty("用户唯一token")
+    private String secretKey;
+
     @ApiModelPropertyEnum(UserTypeEnum.class)
     private UserTypeEnum userType;
 

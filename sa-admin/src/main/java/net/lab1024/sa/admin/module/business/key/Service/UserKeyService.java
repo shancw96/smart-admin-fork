@@ -93,7 +93,7 @@ public class UserKeyService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public ResponseDTO create(Long userId) {
+    public UserKeyEntity create(Long userId) {
         //生成的是不带-的字符串，类似于：b17f24ff026d40949c85a24f4f375d42
         String simpleUUID = IdUtil.simpleUUID();
 
@@ -102,7 +102,7 @@ public class UserKeyService {
         keyEntity.setSecret(simpleUUID);
 
         userKeyDao.insert(keyEntity);
-        return ResponseDTO.ok(keyEntity);
+        return keyEntity;
     }
 
 }
