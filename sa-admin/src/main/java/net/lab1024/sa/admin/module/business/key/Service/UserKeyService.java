@@ -72,18 +72,21 @@ public class UserKeyService {
 //            SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secretKey);
             AES.setKey("ThisIsASecretKey");
             List<GoodsRemainTimeEntity> goodsRemainTimeList = goodsRemainTimeDao.queryAllByUserSecret(form.getSecret());
+
             // 获取所有未过期(expiredTime LocalDateTime)的goodsRemainTimeEntity
             List<Long> goodsId = goodsRemainTimeList.stream()
                     .filter(entity -> entity.getExpiredTime().compareTo(LocalDateTime.now()) > 0)
                     .map(entity -> entity.getGoodsId()).collect(Collectors.toList());
 
+            log.info("goodsId:{}", goodsId);
+
             // goodsId join with , and encrypt
             String goodIdStr = goodsId.stream().map(String::valueOf).collect(Collectors.joining(","));
             // 加上时间混淆
-            String goodsIdTime = "POWER_01,POWER02".concat(",").concat(DateUtil.formatDateTime(new DateTime()));
+            String rawString = goodIdStr.concat(",").concat(DateUtil.format(DateUtil.offsetHour(new DateTime(), 1), "yyyy-MM-dd-HH-mm-ss"));
             //加密
-            String encrypt = AES.encrypt(goodsIdTime, "ThisIsASecretKey");
-            log.info("encrypt:{}", encrypt);
+            String encrypt = AES.encrypt(rawString, "ThisIsASecretKey");
+            log.info("encrypt:{} ", encrypt);
             return ResponseDTO.ok(encrypt);
         } else {
             return ResponseDTO.error(UserErrorCode.USER_STATUS_ERROR, "当前已有用户登录，ip为".concat(lastIp).concat("请30min后再试"));
