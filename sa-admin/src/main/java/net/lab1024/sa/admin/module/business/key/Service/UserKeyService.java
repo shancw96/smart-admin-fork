@@ -3,19 +3,16 @@ package net.lab1024.sa.admin.module.business.key.Service;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import lombok.extern.slf4j.Slf4j;
 import net.lab1024.sa.admin.module.business.goods.dao.GoodsRemainTimeDao;
 import net.lab1024.sa.admin.module.business.goods.domain.entity.GoodsRemainTimeEntity;
-import net.lab1024.sa.admin.module.business.goods.domain.vo.GoodsRemainTimeVO;
 import net.lab1024.sa.admin.module.business.key.dao.UserKeyDao;
 import net.lab1024.sa.admin.module.business.key.domain.entity.UserKeyEntity;
 import net.lab1024.sa.admin.module.business.key.domain.form.KeyUploadForm;
-import net.lab1024.sa.admin.module.system.login.domain.LoginEmployeeDetail;
 import net.lab1024.sa.common.common.code.UserErrorCode;
 import net.lab1024.sa.common.common.domain.ResponseDTO;
+import net.lab1024.sa.common.common.encryption.AES;
 import net.lab1024.sa.common.constant.RedisKeyConst;
 import net.lab1024.sa.common.module.support.redis.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -73,7 +69,8 @@ public class UserKeyService {
             // set secret <-> ip to redis
             redisService.set(redisSecretKey, ip, EXPIRED_MINUTE * 60);
             // -------------- 对权限进行加密处理 --------------
-            SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secretKey);
+//            SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, secretKey);
+            AES.setKey("ThisIsASecretKey");
             List<GoodsRemainTimeEntity> goodsRemainTimeList = goodsRemainTimeDao.queryAllByUserSecret(form.getSecret());
             // 获取所有未过期(expiredTime LocalDateTime)的goodsRemainTimeEntity
             List<Long> goodsId = goodsRemainTimeList.stream()
@@ -83,10 +80,11 @@ public class UserKeyService {
             // goodsId join with , and encrypt
             String goodIdStr = goodsId.stream().map(String::valueOf).collect(Collectors.joining(","));
             // 加上时间混淆
-            String goodsIdTime = goodIdStr.concat(",").concat(DateUtil.formatDateTime(new DateTime()));
+            String goodsIdTime = "POWER_01,POWER02".concat(",").concat(DateUtil.formatDateTime(new DateTime()));
             //加密
-            byte[] encrypt = aes.encrypt(goodsIdTime);
-            return ResponseDTO.ok(new String(encrypt));
+            String encrypt = AES.encrypt(goodsIdTime, "ThisIsASecretKey");
+            log.info("encrypt:{}", encrypt);
+            return ResponseDTO.ok(encrypt);
         } else {
             return ResponseDTO.error(UserErrorCode.USER_STATUS_ERROR, "当前已有用户登录，ip为".concat(lastIp).concat("请30min后再试"));
         }
