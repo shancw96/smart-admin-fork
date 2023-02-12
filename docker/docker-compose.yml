@@ -1,0 +1,41 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    ports:
+      - "3307:3306"
+    restart: always
+    volumes:
+      - type: bind
+        source: /home/shancw/dock1/project/ai-aiming/mysql
+        target: /var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=123789456
+      - TZ=Asia/Shanghai
+  redis:
+    restart: always
+    image: redis
+    ports:
+      - "6379:6379"
+  smart-admin:
+    build:
+      context: .
+    restart: always
+    ports:
+      - "1024:1024"
+    volumes:
+      - /home/devs/ai-aiming:/home
+    environment:
+      - TZ=Asia/Shanghai
+#       - SPRING_DATASOURCE_URL=jdbc:mysql://192.168.5.185:3307/smart_admin_v2
+#       - SPRING_DATASOURCE_USERNAME=root
+#       - SPRING_DATASOURCE_PASSWORD=123789456
+#       - SPRING_REDIS_HOST=192.168.5.185
+    depends_on:
+      - db
+
+
+networks:
+  default:
+    external:
+      name: ai_aiming_network

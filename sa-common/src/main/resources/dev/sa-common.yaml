@@ -64,7 +64,7 @@ spring:
 # tomcat 配置，主要用于 配置 访问日志（便于将来排查错误）
 server:
   tomcat:
-    basedir: /Users/wushangcheng/project/smart-admin-master/smart-admin-api/logs/smart_admin_v2/tomcat-logs
+    basedir: ${localPath:/home}/logs/smart_admin_v2/tomcat-logs
     accesslog:
       enabled: true
       pattern: '%t %{X-Forwarded-For}i %a "%r" %s %D (%D ms)'
@@ -87,7 +87,7 @@ file:
   storage:
     mode: cloud
     local:
-      path: /Users/wushangcheng/project/smart-admin-master/smart-admin-api/smart_admin_v2/upload/
+      path: ${localPath:/home}/smart_admin_v2/upload/
     cloud:
       region: oss-cn-qingdao
       endpoint: oss-cn-qingdao.aliyuncs.com

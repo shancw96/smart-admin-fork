@@ -5,7 +5,7 @@
 -->
 <Configuration status="INFO" monitorInterval="30">
     <Properties>
-        <Property name="log-path">/Users/wushangcheng/project/smart-admin-master/smart-admin-api/logs/smart_admin_v2/dev</Property>
+        <Property name="log-path">$${env:localPath:-/home}/logs/smart_admin_v2/dev</Property>
     </Properties>
     <Appenders>
         <Console name="Console" target="SYSTEM_OUT">
